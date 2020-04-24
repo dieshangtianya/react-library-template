@@ -1,0 +1,32 @@
+stages:
+  - deploy
+
+before_script:
+  - yarn install --frozen-lockfile
+
+publish:latest:
+  stage: deploy
+  variables:
+    RELEASE_BRANCH: master
+  script:
+    - npm run build
+    - npm run semantic-release-prepare
+    - npx semantic-release
+  only:
+    - master
+  except:
+    - tags
+  when: manual
+
+publish:next:
+  stage: deploy
+  variables:
+    RELEASE_BRANCH: develop
+    RELEASE_TAG: beta
+  script:
+    - npm run build
+    - npx semantic-release
+  only:
+    - develop
+  except:
+    - tags
